@@ -10,8 +10,6 @@
 - axios
 - echarts
 - cookie
-- 第三方插件
-    - [hotjar](https://github.com/Exrick/xmall/blob/master/study/hotjar.md)：一体化分析和反馈
 
 ### 本地开发构建运行
 
