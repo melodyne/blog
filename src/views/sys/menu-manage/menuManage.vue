@@ -338,7 +338,7 @@ export default {
             this.menuForm.icon = "";
             this.menuForm.component = "";
           }
-          this.postRequest("/admin/menu/save", this.menuFormAdd).then(res => {
+          this.postRequest("/admin/func/save", this.menuFormAdd).then(res => {
             this.submitLoading = false;
             if (res.success === true) {
               this.$Message.success("添加成功");
