@@ -102,7 +102,7 @@
                 <Form-item label="头像" prop="avatar">
                   <Input v-model="userForm.avatar" placeholder="可直接填入网络图片链接" clearable style="width: 280px"/>
                   <Button @click="viewPic(userForm.avatar)" type="ghost" icon="eye" class="view-pic">预览图片</Button>
-                  <Upload action="/xboot/upload/file"
+                  <Upload action="/upload/file"
                           :headers="accessToken" 
                           :on-success="handleSuccess"
                           :format="['jpg','jpeg','png','gif']"

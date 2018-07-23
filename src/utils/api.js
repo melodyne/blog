@@ -5,7 +5,7 @@ import { Message } from 'iview';
 import Cookies from 'js-cookie';
 import Main from '@/views/Main.vue';
 // 统一请求路径前缀
-let base = '/xboot';
+let base = '';
 // 超时设定
 axios.defaults.timeout = 10000;
 

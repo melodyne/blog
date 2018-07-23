@@ -11,12 +11,12 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/xboot/*': {
+      '/admin/*': {
         target: 'http://yunyii.com',  // 接口请求地址
         changeOrigin: true,  //是否跨域
-        pathRewrite: {
-          '^/xboot': ''   //需要rewrite重写的,
-        }
+        // pathRewrite: {
+        //   '^/admin': ''   //需要rewrite重写的,
+        // }
       }
     },
 
@@ -51,7 +51,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
 
     /**
      * Source Maps

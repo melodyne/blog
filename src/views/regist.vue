@@ -218,7 +218,7 @@ export default {
       this.getRequest("/common/captcha/init").then(res => {
         if (res.success === true) {
           this.captchaId = res.result.captchaId;
-          this.verifyCodeImg = "/xboot/common/captcha/draw/" + this.captchaId;
+          this.verifyCodeImg = "/common/captcha/draw/" + this.captchaId;
         }
       });
     }

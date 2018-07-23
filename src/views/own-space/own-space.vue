@@ -40,7 +40,7 @@
                             :on-exceeded-size="handleMaxSize"
                             :before-upload="handleBeforeUpload"
                             type="drag"
-                            action="/xboot/upload/file"
+                            action="/upload/file"
                             :headers="accessToken"
                             style="display: inline-block;width:58px;">
                           <div style="width: 58px;height:58px;line-height: 58px;">
