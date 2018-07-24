@@ -66,23 +66,23 @@
     </Row>
     <Modal :title="modalTitle" v-model="userModalVisible" :mask-closable='false' :width="500" :styles="{top: '30px'}">
       <Form ref="userForm" :model="userForm" :label-width="70" :rules="userFormValidate">
-        <FormItem label="网站名称" prop="username">
-          <Input v-model="userForm.username"/>
+        <FormItem label="网站名称" prop="title">
+          <Input v-model="userForm.title"/>
         </FormItem>
-        <FormItem label="网站地址" prop="password" v-if="modalType===0" :error="errorPass">
-          <Input type="password" v-model="userForm.password"/>
+        <FormItem label="网站地址"  v-if="modalType===0" :error="errorPass">
+          <Input type="password" v-model="userForm.url"/>
         </FormItem>
-        <FormItem label="联系人" prop="mobile">
-          <Input v-model="userForm.mobile"/>
+        <FormItem label="联系人" prop="contacts_name">
+          <Input v-model="userForm.contacts_name"/>
         </FormItem>
-        <FormItem label="邮箱" prop="email">
-          <Input v-model="userForm.email"/>
+        <FormItem label="邮箱" prop="contacts_email">
+          <Input v-model="userForm.contacts_email"/>
         </FormItem>
-        <FormItem label="QQ" prop="qq">
-          <Input v-model="userForm.qq"/>
+        <FormItem label="QQ" prop="contacts_qq">
+          <Input v-model="userForm.contacts_qq"/>
         </FormItem>
-        <FormItem label="审核" prop="type">
-          <Select v-model="userForm.type" placeholder="请选择">
+        <FormItem label="审核" prop="status">
+          <Select v-model="userForm.status" placeholder="请选择">
             <Option :value="1">通过</Option>
             <Option :value="-1">不通过</Option>
           </Select>
@@ -395,27 +395,14 @@
           if (valid) {
             let url = "/user/admin/add";
             if (this.modalType === 1) {
-              // 编辑用户
-              url = "/user/admin/edit";
+              url = "/admin/link/update/id/"+this.userForm.id;
             }
-            if (this.modalType === 0) {
-              if (
-                this.userForm.password == "" ||
-                this.userForm.password == undefined
-              ) {
-                this.errorPass = "密码不能为空";
-                return;
-              }
-              if (this.userForm.password.length < 6) {
-                this.errorPass = "密码长度不得少于6位";
-                return;
-              }
-            }
+
             this.submitLoading = true;
             this.postRequest(url, this.userForm).then(res => {
               this.submitLoading = false;
               if (res.success === true) {
-                this.$Message.success("操作成功");
+                this.$Message.success("修改成功");
                 this.init();
                 this.userModalVisible = false;
               }
@@ -465,7 +452,7 @@
       },
       edit(v) {
         this.modalType = 1;
-        this.modalTitle = "编辑用户";
+        this.modalTitle = "修改友链信息";
         this.$refs.userForm.resetFields();
         // 转换null为""
         for (let attr in v) {
@@ -476,11 +463,6 @@
         let str = JSON.stringify(v);
         let userInfo = JSON.parse(str);
         this.userForm = userInfo;
-        let selectRolesId = [];
-        this.userForm.roles.forEach(function(e) {
-          selectRolesId.push(e.id);
-        });
-        this.userForm.roles = selectRolesId;
         this.userModalVisible = true;
       },
       enable(v) {
@@ -515,9 +497,9 @@
       remove(v) {
         this.$Modal.confirm({
           title: "确认删除",
-          content: "您确认要删除用户 " + v.username + " ?",
+          content: "您确认要删除该条友链信息？",
           onOk: () => {
-            this.deleteRequest("/user/delByIds", { ids: v.id }).then(res => {
+            this.deleteRequest("/admin/link/delete/id/"+v.id, { ids: v.id }).then(res => {
               if (res.success === true) {
                 this.$Message.success("删除成功");
                 this.init();

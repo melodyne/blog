@@ -3,7 +3,7 @@
         <Col :xs="{span:22}" style="width: 368px;">
             <Row class="header">
                 <img src="../images/xboot.png" width="220px"/>
-                <div class="description">X-Boot 是很不错的Web前后端分离架构脚手架</div>
+                <div class="description">云易博客后台管理系统</div>
             </Row>
 
             <Alert type="error" show-icon v-if="error">{{errorMsg}}</Alert>
@@ -54,7 +54,7 @@
 
                 <Row type="flex" justify="space-between" class="code-row-bg">
                     <Checkbox v-model="saveLogin" size="large">自动登录</Checkbox>
-                    <a class="forget-pass" @click="showAccount">忘记密码</a>
+                    <a class="forget-pass">忘记密码</a>
                 </Row>
                 <Row>
                     <Button class="login-btn" type="primary" size="large" :loading="loading" @click="submitLogin" long>
@@ -161,16 +161,16 @@ export default {
       }, 1000);
     },
     submitLogin() {
+      this.error = false;
       if (this.tabName === "username") {
         this.$refs.usernameLoginForm.validate(valid => {
           if (valid) {
             this.loading = true;
             this.postRequest("/admin/user/login", {
-              username: this.form.username,
+              account: this.form.username,
               password: this.form.password,
               saveLogin: this.saveLogin
             }).then(res => {
-              console.log(res);
               if (res.success === true) {
                 setStore("accessToken", res.result);
                 if (this.saveLogin) {
@@ -183,7 +183,7 @@ export default {
                     delete res.result.permissions;
                     Cookies.set("userInfo", JSON.stringify(res.result));
                     setStore("userInfo", res.result);
-                    this.$store.commit("setAvatarPath", res.result.avatar);
+                    this.$store.commit("setAvatarPath", res.result.head_img);
                     // 加载菜单
                     util.initRouter(this);
                     this.$router.push({
@@ -195,6 +195,10 @@ export default {
                 });
               } else {
                 this.loading = false;
+                this.$Notice.info({
+                  title: "错误提示！",
+                  desc: res.msg
+                });
               }
             });
           }
@@ -212,16 +216,10 @@ export default {
           }
         });
       }
-    },
-    showAccount() {
-      this.$Notice.info({
-        title: "体验账号密码",
-        desc: "账号1：test 密码：123456 <br>账号2：test2 密码：123456 已开放注册！"
-      });
     }
   },
   mounted() {
-    this.showAccount();
+
   }
 };
 </script>

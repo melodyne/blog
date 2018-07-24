@@ -217,26 +217,9 @@ export default {
   methods: {
     init() {
       let userInfo = JSON.parse(Cookies.get("userInfo"));
-      this.username = userInfo.username;
-      this.getRequest("/common/ip/info").then(res => {
-        if (res.success === true) {
-          let ipInfo = JSON.parse(res.result);
-          if (ipInfo.retCode === "200") {
-            let info = ipInfo.result[0];
-            let weather =
-              info.weather +
-              " " +
-              info.temperature +
-              " 污染指数: " +
-              info.pollutionIndex;
-            this.city = info.city;
-            this.weather = weather;
-          } else {
-            this.city = "未知";
-            this.weather = "未知";
-          }
-        }
-      });
+      this.username = userInfo.account;
+      this.city = "未知";
+      this.weather = "未知";
     }
   },
   mounted() {
