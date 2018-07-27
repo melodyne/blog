@@ -5,7 +5,7 @@ export const loginRouter = {
     path: '/login',
     name: 'login',
     meta: {
-        title: '登录 - X-Boot前后端分离框架 '
+        title: '云易博客后台管理 '
     },
     component: () => import('@/views/login.vue')
 };
@@ -28,14 +28,14 @@ export const registResult = {
     component: () => import('@/views/regist-result.vue')
 };
 
-// export const page404 = {
-//     path: '/*',
-//     name: 'error-404',
-//     meta: {
-//         title: '404-页面不存在'
-//     },
-//     component: () => import('@/views/error-page/404.vue')
-// };
+export const page404 = {
+    path: '/*',
+    name: 'error-404',
+    meta: {
+        title: '404-页面不存在'
+    },
+    component: () => import('@/views/error-page/404.vue')
+};
 
 export const page403 = {
     path: '/403',
