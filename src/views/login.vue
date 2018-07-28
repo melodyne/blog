@@ -2,7 +2,7 @@
     <Row type="flex" justify="center" align="middle" class="login" @keydown.enter.native="submitLogin">
         <Col :xs="{span:22}" style="width: 368px;">
             <Row class="header">
-                <img src="../images/xboot.png" width="220px"/>
+                <img src="../images/logo.png" width="220px"/>
                 <div class="description">云易博客后台管理系统</div>
             </Row>
 

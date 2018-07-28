@@ -1,8 +1,8 @@
 {
   "name": "x-boot",
   "version": "1.0.0",
-  "description": "x-boot前后端分离框架",
-  "author": "Exrick <1012139570@qq.com>",
+  "description": "云易博客后台管理",
+  "author": "Wanzhou Chen",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
@@ -20,6 +20,7 @@
     "iview": "^2.14.1",
     "iview-area": "^1.5.16",
     "js-cookie": "^2.2.0",
+    "layui-src": "^2.3.0",
     "rasterizehtml": "^1.2.4",
     "simplemde": "^1.11.2",
     "sortablejs": "^1.7.0",

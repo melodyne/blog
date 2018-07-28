@@ -1,5 +1,5 @@
 <style lang="less">
-  @import "./ad.less";
+  @import "./pro.less";
 </style>
 <template>
   <div class="search">
@@ -8,13 +8,10 @@
         <Card>
           <Row>
             <Form ref="searchForm" :model="searchForm" inline :label-width="70" class="search-form">
-              <Form-item label="网站名称" prop="username">
-                <Input type="text" v-model="searchForm.username" clearable placeholder="请输入用户名" style="width: 200px"/>
+              <Form-item label="项目名称" prop="username">
+                <Input type="text" v-model="searchForm.username" clearable placeholder="请输入关键字" style="width: 200px"/>
               </Form-item>
               <span v-if="drop">
-                              <Form-item label="邮箱" prop="email">
-                                <Input type="text" v-model="searchForm.email" clearable placeholder="请输入邮箱" style="width: 200px"/>
-                              </Form-item>
                               <Form-item label="状态" prop="status">
                                 <Select v-model="searchForm.status" placeholder="请选择" clearable style="width: 200px">
                                   <Option value="0">正常</Option>
@@ -35,7 +32,7 @@
             </Form>
           </Row>
           <Row class="operation">
-            <Button @click="addUser" type="primary" icon="plus-round">添加网站</Button>
+            <Button onclick="window.location.hash = '/form2/ad';" type="primary" icon="plus-round">添加项目</Button>
             <Button @click="delAll" type="ghost" icon="trash-a">批量删除</Button>
             <Dropdown @on-click="handleDropdown">
               <Button type="ghost">
@@ -61,232 +58,6 @@
           <Row type="flex" justify="end" class="code-row-bg page">
             <Page :current="this.searchForm.pageNumber" :total="total" :page-size="this.searchForm.pageSize" @on-change="changePage" @on-page-size-change="changePageSize" :page-size-opts="[10,20,50,100]" size="small" show-total show-elevator show-sizer></Page>
           </Row>
-          <form class="layui-form" action="">
-            <div class="layui-form-item">
-              <label class="layui-form-label">单行输入框</label>
-              <div class="layui-input-block">
-                <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
-              </div>
-            </div>
-            <div class="layui-form-item">
-              <label class="layui-form-label">验证必填项</label>
-              <div class="layui-input-block">
-                <input type="text" name="username" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
-              </div>
-            </div>
-
-            <div class="layui-form-item">
-              <div class="layui-inline">
-                <label class="layui-form-label">验证手机</label>
-                <div class="layui-input-inline">
-                  <input type="tel" name="phone" lay-verify="required|phone" autocomplete="off" class="layui-input">
-                </div>
-              </div>
-              <div class="layui-inline">
-                <label class="layui-form-label">验证邮箱</label>
-                <div class="layui-input-inline">
-                  <input type="text" name="email" lay-verify="email" autocomplete="off" class="layui-input">
-                </div>
-              </div>
-            </div>
-
-            <div class="layui-form-item">
-              <div class="layui-inline">
-                <label class="layui-form-label">多规则验证</label>
-                <div class="layui-input-inline">
-                  <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input">
-                </div>
-              </div>
-              <div class="layui-inline">
-                <label class="layui-form-label">验证日期</label>
-                <div class="layui-input-inline">
-                  <input type="text" name="date" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
-                </div>
-              </div>
-              <div class="layui-inline">
-                <label class="layui-form-label">验证链接</label>
-                <div class="layui-input-inline">
-                  <input type="tel" name="url" lay-verify="url" autocomplete="off" class="layui-input">
-                </div>
-              </div>
-            </div>
-
-            <div class="layui-form-item">
-              <label class="layui-form-label">验证身份证</label>
-              <div class="layui-input-block">
-                <input type="text" name="identity" lay-verify="identity" placeholder="" autocomplete="off" class="layui-input">
-              </div>
-            </div>
-            <div class="layui-form-item">
-              <label class="layui-form-label">自定义验证</label>
-              <div class="layui-input-inline">
-                <input type="password" name="password" lay-verify="pass" placeholder="请输入密码" autocomplete="off" class="layui-input">
-              </div>
-              <div class="layui-form-mid layui-word-aux">请填写6到12位密码</div>
-            </div>
-
-            <div class="layui-form-item">
-              <div class="layui-inline">
-                <label class="layui-form-label">范围</label>
-                <div class="layui-input-inline" style="width: 100px;">
-                  <input type="text" name="price_min" placeholder="￥" autocomplete="off" class="layui-input">
-                </div>
-                <div class="layui-form-mid">-</div>
-                <div class="layui-input-inline" style="width: 100px;">
-                  <input type="text" name="price_max" placeholder="￥" autocomplete="off" class="layui-input">
-                </div>
-              </div>
-            </div>
-
-            <div class="layui-form-item">
-              <label class="layui-form-label">单行选择框</label>
-              <div class="layui-input-block">
-                <select name="interest" lay-filter="aihao">
-                  <option value=""></option>
-                  <option value="0">写作</option>
-                  <option value="1" selected="">阅读</option>
-                  <option value="2">游戏</option>
-                  <option value="3">音乐</option>
-                  <option value="4">旅行</option>
-                </select>
-              </div>
-            </div>
-
-
-            <div class="layui-form-item">
-              <div class="layui-inline">
-                <label class="layui-form-label">分组选择框</label>
-                <div class="layui-input-inline">
-                  <select name="quiz">
-                    <option value="">请选择问题</option>
-                    <optgroup label="城市记忆">
-                      <option value="你工作的第一个城市">你工作的第一个城市</option>
-                    </optgroup>
-                    <optgroup label="学生时代">
-                      <option value="你的工号">你的工号</option>
-                      <option value="你最喜欢的老师">你最喜欢的老师</option>
-                    </optgroup>
-                  </select>
-                </div>
-              </div>
-              <div class="layui-inline">
-                <label class="layui-form-label">搜索选择框</label>
-                <div class="layui-input-inline">
-                  <select name="modules" lay-verify="required" lay-search="">
-                    <option value="">直接选择或搜索选择</option>
-                    <option value="1">layer</option>
-                    <option value="2">form</option>
-                    <option value="3">layim</option>
-                    <option value="4">element</option>
-                    <option value="5">laytpl</option>
-                    <option value="6">upload</option>
-                    <option value="7">laydate</option>
-                    <option value="8">laypage</option>
-                    <option value="9">flow</option>
-                    <option value="10">util</option>
-                    <option value="11">code</option>
-                    <option value="12">tree</option>
-                    <option value="13">layedit</option>
-                    <option value="14">nav</option>
-                    <option value="15">tab</option>
-                    <option value="16">table</option>
-                    <option value="17">select</option>
-                    <option value="18">checkbox</option>
-                    <option value="19">switch</option>
-                    <option value="20">radio</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="layui-form-item">
-              <label class="layui-form-label">联动选择框</label>
-              <div class="layui-input-inline">
-                <select name="quiz1">
-                  <option value="">请选择省</option>
-                  <option value="浙江" selected="">浙江省</option>
-                  <option value="你的工号">江西省</option>
-                  <option value="你最喜欢的老师">福建省</option>
-                </select>
-              </div>
-              <div class="layui-input-inline">
-                <select name="quiz2">
-                  <option value="">请选择市</option>
-                  <option value="杭州">杭州</option>
-                  <option value="宁波" disabled="">宁波</option>
-                  <option value="温州">温州</option>
-                  <option value="温州">台州</option>
-                  <option value="温州">绍兴</option>
-                </select>
-              </div>
-              <div class="layui-input-inline">
-                <select name="quiz3">
-                  <option value="">请选择县/区</option>
-                  <option value="西湖区">西湖区</option>
-                  <option value="余杭区">余杭区</option>
-                  <option value="拱墅区">临安市</option>
-                </select>
-              </div>
-              <div class="layui-form-mid layui-word-aux">此处只是演示联动排版，并未做联动交互</div>
-            </div>
-
-            <div class="layui-form-item">
-              <label class="layui-form-label">复选框</label>
-              <div class="layui-input-block">
-                <input type="checkbox" name="like[write]" title="写作">
-                <input type="checkbox" name="like[read]" title="阅读" checked="">
-                <input type="checkbox" name="like[game]" title="游戏">
-              </div>
-            </div>
-
-            <div class="layui-form-item" pane="">
-              <label class="layui-form-label">原始复选框</label>
-              <div class="layui-input-block">
-                <input type="checkbox" name="like1[write]" lay-skin="primary" title="写作" checked="">
-                <input type="checkbox" name="like1[read]" lay-skin="primary" title="阅读">
-                <input type="checkbox" name="like1[game]" lay-skin="primary" title="游戏" disabled="">
-              </div>
-            </div>
-
-            <div class="layui-form-item">
-              <label class="layui-form-label">开关-默认关</label>
-              <div class="layui-input-block">
-                <input type="checkbox" name="close" lay-skin="switch" lay-text="ON|OFF">
-              </div>
-            </div>
-            <div class="layui-form-item">
-              <label class="layui-form-label">开关-默认开</label>
-              <div class="layui-input-block">
-                <input type="checkbox" checked="" name="open" lay-skin="switch" lay-filter="switchTest" lay-text="ON|OFF">
-              </div>
-            </div>
-            <div class="layui-form-item">
-              <label class="layui-form-label">单选框</label>
-              <div class="layui-input-block">
-                <input type="radio" name="sex" value="男" title="男" checked="">
-                <input type="radio" name="sex" value="女" title="女">
-                <input type="radio" name="sex" value="禁" title="禁用" disabled="">
-              </div>
-            </div>
-            <div class="layui-form-item layui-form-text">
-              <label class="layui-form-label">普通文本域</label>
-              <div class="layui-input-block">
-                <textarea placeholder="请输入内容" class="layui-textarea"></textarea>
-              </div>
-            </div>
-            <!--<div class="layui-form-item layui-form-text">
-              <label class="layui-form-label">编辑器</label>
-              <div class="layui-input-block">
-                <textarea class="layui-textarea layui-hide" name="content" lay-verify="content" id="LAY_demo_editor"></textarea>
-              </div>
-            </div>-->
-            <div class="layui-form-item">
-              <div class="layui-input-block">
-                <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-              </div>
-            </div>
-          </form>
         </Card>
       </Col>
     </Row>
@@ -376,60 +147,31 @@
             align: "center"
           },
           {
-            title: "网站名称",
-            key: "title",
+            title: "项目名称",
+            key: "name",
             width: 145,
             sortable: true
           },
           {
-            title: "网站地址",
-            key: "url",
+            title: "标签",
+            key: "tag",
             width: 200,
             sortable: true,
           },
           {
-            title: "网站简介",
+            title: "项目简介",
             key: "intro",
             width: 240,
             sortable: true
           },
           {
-            title: "联系人",
-            key: "contacts_name",
-            width: 100,
-            sortable: true
-          },
-          {
-            title: "QQ",
-            key: "contacts_qq",
-            width: 100,
-            align: "center",
-          },
-          {
-            title: "邮箱",
-            key: "contacts_email",
-            width: 200,
-            align: "center",
-          },
-          {
-            title: "审核状态",
+            title: "状态",
             key: "status",
             align: "center",
             width: 140,
             render: (h, params) => {
               let re = "";
-              if (params.row.status === 0) {
-                return h("div", [
-                  h("Tag", {
-                      props: {
-                        type: "dot",
-                        color: "yellow"
-                      }
-                    },
-                    "待审核"
-                  )
-                ]);
-              } else if (params.row.status === 1) {
+              if (params.row.status === 1) {
                 return h("div", [
                   h("Tag", {
                       props: {
@@ -437,9 +179,9 @@
                         color: "green"
                       }
                     },
-                  "已通过")
+                    "显示")
                 ]);
-              }else {
+              } else {
                 return h("div", [
                   h("Tag", {
                       props: {
@@ -447,23 +189,19 @@
                         color: "red"
                       }
                     },
-                    "未通过")
+                    "不显示")
                 ]);
               }
             },
             filters: [
               {
-                label: "待审核",
+                label: "显示",
+                value: 1
+              },
+              {
+                label: "不显示",
                 value: 0
               },
-              {
-                label: "已通过",
-                value: -1
-              },
-              {
-                label: "未通过",
-                value: -1
-              }
             ],
             filterMultiple: false,
             filterMethod(value, row) {
@@ -565,7 +303,7 @@
       getUserList() {
         // 多条件搜索用户列表
         this.loading = true;
-        this.getRequest("/admin/link", this.searchForm).then(res => {
+        this.getRequest("/admin/pro", this.searchForm).then(res => {
           this.loading = false;
           if (res.success === true) {
             this.data = res.result.data;
@@ -619,9 +357,9 @@
       submitUser() {
         this.$refs.userForm.validate(valid => {
           if (valid) {
-            let url = "/user/admin/add";
+            let url = "/user/pro/add";
             if (this.modalType === 1) {
-              url = "/admin/link/update/id/"+this.userForm.id;
+              url = "/admin/pro/update/id/"+this.userForm.id;
             }
 
             this.submitLoading = true;
@@ -671,10 +409,10 @@
         }
       },
       addUser() {
-        this.modalType = 0;
-        this.modalTitle = "添加用户";
-        this.$refs.userForm.resetFields();
-        this.userModalVisible = true;
+        // this.modalType = 0;
+        // this.modalTitle = "添加用户";
+        // this.$refs.userForm.resetFields();
+        // this.userModalVisible = true;
       },
       edit(v) {
         this.modalType = 1;
@@ -725,7 +463,7 @@
           title: "确认删除",
           content: "您确认要删除该条友链信息？",
           onOk: () => {
-            this.deleteRequest("/admin/link/delete/id/"+v.id, { ids: v.id }).then(res => {
+            this.deleteRequest("/admin/pro/delete/id/"+v.id, { ids: v.id }).then(res => {
               if (res.success === true) {
                 this.$Message.success("删除成功");
                 this.init();

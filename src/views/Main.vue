@@ -14,12 +14,14 @@
           :menu-list="menuList">
           <div slot="top" class="logo-con">
             <img v-show="!shrink"  src="../images/logo.png" key="max-logo" />
-            <img v-show="shrink" src="../images/logo-min.png" key="min-logo" />
+            <img v-show="shrink" src="../images/logo.png" key="min-logo" />
           </div>
         </shrinkable-menu>
       </scroll-bar>
     </div>
     <div class="main-header-con" :style="{paddingLeft: shrink?'60px':'200px'}">
+
+
       <div class="main-header">
         <div class="navicon-con">
           <Button :style="{transform: 'rotateZ(' + (this.shrink ? '-90' : '0') + 'deg)'}" type="text" @click="toggleClick">
