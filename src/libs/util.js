@@ -181,7 +181,7 @@ util.setCurrentPath = function (vm, name) {
 
 util.openNewPage = function (vm, name, argu, query) {
   let pageOpenedList = vm.$store.state.app.pageOpenedList;
-  console.log(pageOpenedList)
+  //console.log(pageOpenedList)
   let openedPageLen = pageOpenedList.length;
   let i = 0;
   let tagHasOpened = false;
@@ -197,7 +197,7 @@ util.openNewPage = function (vm, name, argu, query) {
     }
     i++;
   }
-  console.log(tagHasOpened);
+  //console.log(tagHasOpened);
   if (!tagHasOpened) {
     // console.log(vm.$store.state.app.tagsList)
     let tag = vm.$store.state.app.tagsList.filter((item) => {
@@ -301,7 +301,7 @@ util.initRouter = function (vm) {
 util.initRouterNode = function (routers, data) {
   for (var item of data) {
     let menu = Object.assign({}, item);
-    // menu.component = import(`@/views/${menu.component}.vue`);
+    console.log(menu.component);
     menu.component = lazyLoading(menu.component);
 
     if (item.children && item.children.length > 0) {
@@ -314,7 +314,6 @@ util.initRouterNode = function (routers, data) {
     meta.permTypes = menu.permTypes ? menu.permTypes : null;
     meta.title = menu.title ? menu.title + " - X-Boot前后端分离框架" : null;
     menu.meta = meta;
-
     routers.push(menu);
   }
 };

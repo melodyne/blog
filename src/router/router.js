@@ -28,14 +28,14 @@ export const registResult = {
     component: () => import('@/views/regist-result.vue')
 };
 
-export const page404 = {
-    path: '/*',
-    name: 'error-404',
-    meta: {
-        title: '404-页面不存在'
-    },
-    component: () => import('@/views/error-page/404.vue')
-};
+// export const page404 = {
+//     path: '/*',
+//     name: 'error-404',
+//     meta: {
+//         title: '404-页面不存在'
+//     },
+//     component: () => import('@/views/error-page/404.vue')
+// };
 
 export const page403 = {
     path: '/403',
@@ -71,7 +71,8 @@ export const otherRouter = {
         { path: 'home', title: { i18n: 'home' }, name: 'home_index', component: () => import('@/views/home/home.vue') },
         { path: 'ownspace', title: '个人中心', name: 'ownspace_index', component: () => import('@/views/own-space/own-space.vue') },
         { path: 'change-pass', title: '修改密码', name: 'change_pass', component: () => import('@/views/change-pass/change-pass.vue') },
-        { path: 'message', title: '消息中心', name: 'message_index', component: () => import('@/views/message/message.vue') }
+        { path: 'message', title: '消息中心', name: 'message_index', component: () => import('@/views/message/message.vue') },
+        { path: 'operation/pro_edit', title: '案例编辑', name: 'operation/pro_edit', component: () => import('@/views/operation/pro_edit.vue') }
     ]
 };
 

@@ -1,99 +1,130 @@
 <style lang="less">
-  @import "./pro.less";
+  @import "./ad.less";
 </style>
 <template>
   <div class="search">
     <Row>
       <Col>
         <Card>
-          <Row>
-            <Form ref="searchForm" :model="searchForm" inline :label-width="70" class="search-form">
-              <Form-item label="项目名称" prop="username">
-                <Input type="text" v-model="searchForm.username" clearable placeholder="请输入关键字" style="width: 200px"/>
-              </Form-item>
-              <span v-if="drop">
-                              <Form-item label="状态" prop="status">
-                                <Select v-model="searchForm.status" placeholder="请选择" clearable style="width: 200px">
-                                  <Option value="0">正常</Option>
-                                  <Option value="-1">禁用</Option>
-                                </Select>
-                              </Form-item>
-                              <Form-item label="创建时间">
-                                <DatePicker type="daterange" format="yyyy-MM-dd" clearable @on-change="selectDateRange" placeholder="选择起始时间" style="width: 200px"></DatePicker>
-                              </Form-item>
-                            </span>
-              <Form-item style="margin-left:-35px;">
-                <Button @click="handleSearch" type="primary" icon="search">搜索</Button>
-                <Button @click="handleReset" type="ghost" >重置</Button>
-                <a class="drop-down" @click="dropDown">{{dropDownContent}}
-                  <Icon :type="dropDownIcon"></Icon>
-                </a>
-              </Form-item>
-            </Form>
-          </Row>
-          <Row class="operation">
-            <Button onclick="window.location.hash = '/operation/pro_edit';" type="primary" icon="plus-round">添加项目</Button>
-            <Button @click="delAll" type="ghost" icon="trash-a">批量删除</Button>
-            <Dropdown @on-click="handleDropdown">
-              <Button type="ghost">
-                更多操作
-                <Icon type="arrow-down-b"></Icon>
-              </Button>
-              <DropdownMenu slot="list">
-                <DropdownItem name="refresh">刷新</DropdownItem>
-                <DropdownItem name="exportData">导出所选数据</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </Row>
-          <Row>
-            <Alert show-icon>
-              已选择 <span class="select-count">{{selectCount}}</span> 项
-              <a class="select-clear" @click="clearSelectAll">清空</a>
-            </Alert>
-          </Row>
-          <Row class="margin-top-10 searchable-table-con1">
-            <Table :loading="loading" border :columns="columns" :data="data" sortable="custom" @on-sort-change="changeSort" @on-selection-change="showSelect" ref="table"></Table>
-            <Table :columns="columns" :data="exportData" ref="exportTable" style="display:none"></Table>
-          </Row>
-          <Row type="flex" justify="end" class="code-row-bg page">
-            <Page :current="this.searchForm.pageNumber" :total="total" :page-size="this.searchForm.pageSize" @on-change="changePage" @on-page-size-change="changePageSize" :page-size-opts="[10,20,50,100]" size="small" show-total show-elevator show-sizer></Page>
-          </Row>
+          <div style="margin: 30px 0px 30px 40px;font-size: 15px;color: #666;font-weight: bold;font-family: 微软雅黑">新增案例</div>
+          <form class="layui-form" action="">
+            <div class="layui-form-item">
+              <label class="layui-form-label">名称</label>
+              <div class="layui-input-block">
+                <input type="text" name="name" lay-verify="name" autocomplete="off" placeholder="请输入案例名称" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+              <label class="layui-form-label">简介</label>
+              <div class="layui-input-block">
+                <textarea placeholder="请输入内容" class="layui-textarea" name="intro"></textarea>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">标签</label>
+              <div class="layui-input-block" style="width: 180px">
+                <input type="text" name="tag" maxlength="8" placeholder="请输入标签" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">封面</label>
+              <div class="layui-input-block">
+                <div class="layui-upload-drag" id="test10">
+                  <i class="layui-icon" style="color: #2d8cf0"></i>
+                  <p>点击上传，或将文件拖拽到此处</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+              <label class="layui-form-label">内容</label>
+              <div class="layui-input-block">
+                <textarea class="layui-textarea layui-hide" name="content" lay-verify="content" id="LAY_demo_editor"></textarea>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">显示</label>
+              <div class="layui-input-block">
+                <input type="checkbox" name="status" lay-skin="switch" lay-filter="switchTest" lay-text="ON|OFF">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button class="ivu-btn ivu-btn-primary" lay-submit="" lay-filter="demo1">立即提交</button>
+                <button type="reset" class="ivu-btn">重置</button>
+              </div>
+            </div>
+          </form>
         </Card>
       </Col>
     </Row>
-    <Modal :title="modalTitle" v-model="userModalVisible" :mask-closable='false' :width="500" :styles="{top: '30px'}">
-      <Form ref="userForm" :model="userForm" :label-width="70" :rules="userFormValidate">
-        <FormItem label="网站名称" prop="title">
-          <Input v-model="userForm.title"/>
-        </FormItem>
-        <FormItem label="网站地址"  v-if="modalType===0" :error="errorPass">
-          <Input type="password" v-model="userForm.url"/>
-        </FormItem>
-        <FormItem label="联系人" prop="contacts_name">
-          <Input v-model="userForm.contacts_name"/>
-        </FormItem>
-        <FormItem label="邮箱" prop="contacts_email">
-          <Input v-model="userForm.contacts_email"/>
-        </FormItem>
-        <FormItem label="QQ" prop="contacts_qq">
-          <Input v-model="userForm.contacts_qq"/>
-        </FormItem>
-        <FormItem label="审核" prop="status">
-          <Select v-model="userForm.status" placeholder="请选择">
-            <Option :value="1">通过</Option>
-            <Option :value="-1">不通过</Option>
-          </Select>
-        </FormItem>
-      </Form>
-      <div slot="footer">
-        <Button type="text" @click="cancelUser">取消</Button>
-        <Button type="primary" :loading="submitLoading" @click="submitUser">提交</Button>
-      </div>
-    </Modal>
   </div>
 </template>
 
 <script>
+
+  layui.use(['form', 'layedit', 'laydate','upload'], function(){
+    var form = layui.form
+      ,layer = layui.layer
+      ,layedit = layui.layedit
+      ,laydate = layui.laydate
+      ,upload = layui.upload;
+
+    //日期
+    laydate.render({
+      elem: '#date'
+    });
+    laydate.render({
+      elem: '#date1'
+    });
+
+    //创建一个编辑器
+    var editIndex = layedit.build('LAY_demo_editor',{
+      height: 420 //设置编辑器高度
+    });
+
+    //自定义验证规则
+    form.verify({
+      title: function(value){
+        if(value.length < 5){
+          return '标题至少得5个字符啊';
+        }
+      }
+      ,pass: [/(.+){6,12}$/, '密码必须6到12位']
+      ,content: function(value){
+        layedit.sync(editIndex);
+      }
+    });
+
+    //监听指定开关
+    form.on('switch(switchTest)', function(data){
+      layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+        offset: '6px'
+      });
+      layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+    });
+
+    //拖拽上传
+    upload.render({
+      elem: '#test10'
+      ,url: '/upload/'
+      ,done: function(res){
+        console.log(res)
+      }
+    });
+
+    //监听提交
+    form.on('submit(demo1)', function(data){
+      layer.alert(JSON.stringify(data.field), {
+        title: '最终的提交信息'
+      })
+      return false;
+    });
+
+  });
+
+
   import { getStore } from "@/utils/storage";
   export default {
     name: "user-manage",
@@ -147,31 +178,60 @@
             align: "center"
           },
           {
-            title: "项目名称",
-            key: "name",
+            title: "网站名称",
+            key: "title",
             width: 145,
             sortable: true
           },
           {
-            title: "标签",
-            key: "tag",
+            title: "网站地址",
+            key: "url",
             width: 200,
             sortable: true,
           },
           {
-            title: "项目简介",
+            title: "网站简介",
             key: "intro",
             width: 240,
             sortable: true
           },
           {
-            title: "状态",
+            title: "联系人",
+            key: "contacts_name",
+            width: 100,
+            sortable: true
+          },
+          {
+            title: "QQ",
+            key: "contacts_qq",
+            width: 100,
+            align: "center",
+          },
+          {
+            title: "邮箱",
+            key: "contacts_email",
+            width: 200,
+            align: "center",
+          },
+          {
+            title: "审核状态",
             key: "status",
             align: "center",
             width: 140,
             render: (h, params) => {
               let re = "";
-              if (params.row.status === 1) {
+              if (params.row.status === 0) {
+                return h("div", [
+                  h("Tag", {
+                      props: {
+                        type: "dot",
+                        color: "yellow"
+                      }
+                    },
+                    "待审核"
+                  )
+                ]);
+              } else if (params.row.status === 1) {
                 return h("div", [
                   h("Tag", {
                       props: {
@@ -179,9 +239,9 @@
                         color: "green"
                       }
                     },
-                    "显示")
+                  "已通过")
                 ]);
-              } else {
+              }else {
                 return h("div", [
                   h("Tag", {
                       props: {
@@ -189,19 +249,23 @@
                         color: "red"
                       }
                     },
-                    "不显示")
+                    "未通过")
                 ]);
               }
             },
             filters: [
               {
-                label: "显示",
-                value: 1
-              },
-              {
-                label: "不显示",
+                label: "待审核",
                 value: 0
               },
+              {
+                label: "已通过",
+                value: -1
+              },
+              {
+                label: "未通过",
+                value: -1
+              }
             ],
             filterMultiple: false,
             filterMethod(value, row) {
@@ -303,7 +367,7 @@
       getUserList() {
         // 多条件搜索用户列表
         this.loading = true;
-        this.getRequest("/admin/pro", this.searchForm).then(res => {
+        this.getRequest("/admin/link", this.searchForm).then(res => {
           this.loading = false;
           if (res.success === true) {
             this.data = res.result.data;
@@ -357,9 +421,9 @@
       submitUser() {
         this.$refs.userForm.validate(valid => {
           if (valid) {
-            let url = "/user/pro/add";
+            let url = "/user/admin/add";
             if (this.modalType === 1) {
-              url = "/admin/pro/update/id/"+this.userForm.id;
+              url = "/admin/link/update/id/"+this.userForm.id;
             }
 
             this.submitLoading = true;
@@ -409,10 +473,10 @@
         }
       },
       addUser() {
-        // this.modalType = 0;
-        // this.modalTitle = "添加用户";
-        // this.$refs.userForm.resetFields();
-        // this.userModalVisible = true;
+        this.modalType = 0;
+        this.modalTitle = "添加用户";
+        this.$refs.userForm.resetFields();
+        this.userModalVisible = true;
       },
       edit(v) {
         this.modalType = 1;
@@ -463,7 +527,7 @@
           title: "确认删除",
           content: "您确认要删除该条友链信息？",
           onOk: () => {
-            this.deleteRequest("/admin/pro/delete/id/"+v.id, { ids: v.id }).then(res => {
+            this.deleteRequest("/admin/link/delete/id/"+v.id, { ids: v.id }).then(res => {
               if (res.success === true) {
                 this.$Message.success("删除成功");
                 this.init();
