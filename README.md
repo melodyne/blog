@@ -27,7 +27,6 @@
 ### 本地开发构建运行
 
 - 在项目根文件夹下先后执行命令 `npm install` 、 `npm run dev`
-- 前台端口默认9999 http://localhost:9999
 
 ### 部署
 - 先后执行命令 `npm install` 、 `npm run build` 将打包生成的 `dist` 静态文件放置服务器中，并配置路由代理
