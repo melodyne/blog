@@ -6,13 +6,12 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       '/admin/*': {
-        target: 'http://yunyii.com',  // 接口请求地址
+        target: 'http://yunyii.cn',  // 接口请求地址
         changeOrigin: true,  //是否跨域
         // pathRewrite: {
         //   '^/admin': ''   //需要rewrite重写的,
