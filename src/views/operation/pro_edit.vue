@@ -11,42 +11,63 @@
             <div class="layui-form-item">
               <label class="layui-form-label">名称</label>
               <div class="layui-input-block">
-                <input type="text" name="name" lay-verify="name" autocomplete="off" placeholder="请输入案例名称" class="layui-input">
+                <input type="hidden" v-if="pro.id" name="id" v-model="pro.id">
+                <input type="text" name="name" v-model="pro.name" lay-verify="name"  autocomplete="off" placeholder="请输入案例名称" class="layui-input">
               </div>
             </div>
             <div class="layui-form-item layui-form-text">
               <label class="layui-form-label">简介</label>
               <div class="layui-input-block">
-                <textarea placeholder="请输入内容" class="layui-textarea" name="intro"></textarea>
+                <textarea placeholder="请输入内容" class="layui-textarea" name="intro" v-model="pro.intro"></textarea>
               </div>
             </div>
             <div class="layui-form-item">
               <label class="layui-form-label">标签</label>
               <div class="layui-input-block" style="width: 180px">
-                <input type="text" name="tag" maxlength="8" placeholder="请输入标签" autocomplete="off" class="layui-input">
+                <input type="text" name="tag" v-model="pro.tag"  maxlength="8" placeholder="多个用逗号隔开" autocomplete="off" class="layui-input">
               </div>
             </div>
 
             <div class="layui-form-item">
               <label class="layui-form-label">封面</label>
+              <input type="hidden" name="cover" v-model="pro.cover">
               <div class="layui-input-block">
                 <div class="layui-upload-drag" id="test10">
-                  <i class="layui-icon" style="color: #2d8cf0"></i>
-                  <p>点击上传，或将文件拖拽到此处</p>
+                  <i v-show="!pro.cover" class="layui-icon" style="color: #2d8cf0"></i>
+                  <p v-show="!pro.cover">点击上传，或将图片拖拽到此处</p>
+                  <img v-show="pro.cover"  width="150px" :src="pro.cover_url">
                 </div>
               </div>
             </div>
 
+            <div class="layui-form-item">
+              <label class="layui-form-label">二维码</label>
+              <input type="hidden" name="qr_code" v-model="pro.qr_code">
+              <div class="layui-input-block">
+                <div class="layui-upload-drag" id="qr_code">
+                  <p v-show="!pro.qr_code">上传体验二维码图片</p>
+                  <img v-show="pro.qr_code"  width="100px" :src="pro.qr_code_url">
+                </div>
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">URL</label>
+              <div class="layui-input-block">
+                <input type="text" name="url" v-model="pro.url" lay-verify="url"  autocomplete="off" placeholder="输入网址" class="layui-input">
+              </div>
+            </div>
             <div class="layui-form-item layui-form-text">
               <label class="layui-form-label">内容</label>
               <div class="layui-input-block">
-                <textarea class="layui-textarea layui-hide" name="content" lay-verify="content" id="LAY_demo_editor"></textarea>
+                <textarea class="layui-textarea layui-hide" name="content" v-model="pro.content" lay-verify="content" id="LAY_demo_editor"></textarea>
               </div>
             </div>
             <div class="layui-form-item">
               <label class="layui-form-label">显示</label>
               <div class="layui-input-block">
-                <input type="checkbox" name="status" lay-skin="switch" lay-filter="switchTest" lay-text="ON|OFF">
+                <input type="hidden" name="status" v-model="pro.status" value="0">
+                <input type="checkbox" v-model="pro.status" lay-skin="switch" lay-filter="switchTest" lay-text="ON|OFF">
               </div>
             </div>
             <div class="layui-form-item">
@@ -79,6 +100,12 @@
       elem: '#date1'
     });
 
+    layedit.set({
+      uploadImage: {
+        url: '/admin/Oss/uploadImg' //接口url
+        ,type: 'post' //默认post
+      }
+    });
     //创建一个编辑器
     var editIndex = layedit.build('LAY_demo_editor',{
       height: 420 //设置编辑器高度
@@ -86,12 +113,17 @@
 
     //自定义验证规则
     form.verify({
-      title: function(value){
-        if(value.length < 5){
-          return '标题至少得5个字符啊';
+      name: function(value){
+        if(value.length == 0){
+          return '标题不能为空！';
+        }
+      },
+      url: function(value){
+        value = value.trim()
+        if(value.length>0&&!value.match(/(^#)|(^http(s*):\/\/[^\s]+\.[^\s]+)/)){
+          return '无效网址！';
         }
       }
-      ,pass: [/(.+){6,12}$/, '密码必须6到12位']
       ,content: function(value){
         layedit.sync(editIndex);
       }
@@ -99,26 +131,63 @@
 
     //监听指定开关
     form.on('switch(switchTest)', function(data){
-      layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
-        offset: '6px'
-      });
-      layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+        $('input[name=status]').val(this.checked ?1:0);
     });
 
     //拖拽上传
     upload.render({
       elem: '#test10'
-      ,url: '/upload/'
+      ,url: '/admin/Oss/uploadImg'
+      ,before: function(obj){
+        //预读本地文件示例，不支持ie8
+        obj.preview(function(index, file, result){
+            $('#test10').html('<img width="150px" src="'+result+'">');
+        });
+      }
       ,done: function(res){
-        console.log(res)
+          if(res.code==0){
+              $('input[name=cover]').val(res.data.path);
+          }
+      }
+    });
+    //拖拽上传
+    upload.render({
+      elem: '#qr_code'
+      ,url: '/admin/Oss/uploadImg'
+      ,before: function(obj){
+        //预读本地文件示例，不支持ie8
+        obj.preview(function(index, file, result){
+          $('#qr_code').html('<img width="100px" src="'+result+'">');
+        });
+      }
+      ,done: function(res){
+        if(res.code==0){
+          $('input[name=qr_code]').val(res.data.path);
+        }
       }
     });
 
     //监听提交
     form.on('submit(demo1)', function(data){
-      layer.alert(JSON.stringify(data.field), {
-        title: '最终的提交信息'
-      })
+      var proId = $('input[name=id]').val();
+      if(proId){
+          var url = '/admin/pro/update/id/'+proId;
+      }else {
+        var url = '/admin/pro/add';
+      }
+
+      $.ajax({
+        url:url,
+        type:'POST',
+        data:data.field,
+        success:function (res) {
+          if(res.code==0){
+            window.location.hash = '/home';
+          }else {
+            layer.alert(res.msg);
+          }
+        }
+      });
       return false;
     });
 
@@ -130,6 +199,7 @@
     name: "user-manage",
     data() {
       return {
+        pro:{},
         accessToken: {},
         loading: true,
         drop: false,
@@ -139,20 +209,7 @@
         selectList: [],
         imgUrl: "",
         viewImage: false,
-        searchForm: {
-          username: "",
-          mobile: "",
-          email: "",
-          sex: "",
-          type: "",
-          status: "",
-          pageNumber: 1,
-          pageSize: 10,
-          sort: "createTime",
-          order: "desc",
-          startDate: "",
-          endDate: ""
-        },
+        searchForm: {},
         modalType: 0,
         userModalVisible: false,
         modalTitle: "",
@@ -287,6 +344,7 @@
             title: "操作",
             key: "action",
             width: 240,
+            fixed:'right',
             render: (h, params) => {
               var btns = [
                 h("Button", {
@@ -347,7 +405,30 @@
         this.accessToken = {
           accessToken: getStore("accessToken")
         };
-        this.getUserList();
+        this.$watch('pro', function(nval, oval) {
+          layui.layedit.build('LAY_demo_editor',{
+            height: 420 //设置编辑器高度
+          });
+          layui.form.render(); //这个很重要
+        });
+        this.getPro();
+      },
+      getQuery(name) {
+        //获取当前URL
+        var url = window.location.hash;
+        //获取要取得的get参数位置
+        var get = window.location.hash.indexOf(name +"=");
+        if(get == -1){
+          return false;
+        }
+        //截取字符串
+        var par = url.slice(name.length + get + 1);
+        //判断截取后的字符串是否还有其他get参数
+        var nextPar = par.indexOf("&");
+        if(nextPar != -1){
+            par = par.slice(0, nextPar);
+        }
+        return par;
       },
       changePage(v) {
         this.searchForm.pageNumber = v;
@@ -364,14 +445,16 @@
           this.searchForm.endDate = v[1];
         }
       },
-      getUserList() {
-        // 多条件搜索用户列表
+      getPro() {
+        var proId = this.getQuery('id');
+        if(proId==null){
+            return;
+        }
         this.loading = true;
-        this.getRequest("/admin/link", this.searchForm).then(res => {
+        this.getRequest("/admin/pro/read/id/"+proId).then(res => {
           this.loading = false;
-          if (res.success === true) {
-            this.data = res.result.data;
-            this.total = res.result.total;
+          if (res.code == 0) {
+            this.pro = res.data;
           }
         });
       },
@@ -429,7 +512,7 @@
             this.submitLoading = true;
             this.postRequest(url, this.userForm).then(res => {
               this.submitLoading = false;
-              if (res.success === true) {
+              if (res.code == 0) {
                 this.$Message.success("修改成功");
                 this.init();
                 this.userModalVisible = false;
@@ -499,7 +582,7 @@
           content: "您确认要启用用户 " + v.username + " ?",
           onOk: () => {
             this.postRequest("/user/admin/enable/" + v.id).then(res => {
-              if (res.success === true) {
+              if (res.code== 0) {
                 this.$Message.success("操作成功");
                 this.init();
               }
@@ -514,7 +597,7 @@
           '<label style="margin-left: 30px">未达标：<input style="vertical-align: middle" type="radio" name="status" value="-1"></label>',
           onOk: () => {
             this.postRequest("/admin/link/update/id/" + v.id,{status:$('input[name=status]:checked').val()}).then(res => {
-              if (res.success === true) {
+              if (res.code === 0) {
                 this.$Message.success("操作成功");
                 this.init();
               }
@@ -528,7 +611,7 @@
           content: "您确认要删除该条友链信息？",
           onOk: () => {
             this.deleteRequest("/admin/link/delete/id/"+v.id, { ids: v.id }).then(res => {
-              if (res.success === true) {
+              if (res.code === 0) {
                 this.$Message.success("删除成功");
                 this.init();
               }

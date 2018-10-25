@@ -35,7 +35,7 @@
             </Form>
           </Row>
           <Row class="operation">
-            <Button @click="addUser" type="primary" icon="plus-round">添加网站</Button>
+            <Button @click="addUser" type="primary" icon="plus-round">添加友链</Button>
             <Button @click="delAll" type="ghost" icon="trash-a">批量删除</Button>
             <Dropdown @on-click="handleDropdown">
               <Button type="ghost">
@@ -65,12 +65,12 @@
       </Col>
     </Row>
     <Modal :title="modalTitle" v-model="userModalVisible" :mask-closable='false' :width="500" :styles="{top: '30px'}">
-      <Form ref="userForm" :model="userForm" :label-width="70" :rules="userFormValidate">
+      <Form ref="userForm" :model="userForm" :label-width="70" :rules="formValidate">
         <FormItem label="网站名称" prop="title">
           <Input v-model="userForm.title"/>
         </FormItem>
-        <FormItem label="网站地址"  v-if="modalType===0" :error="errorPass">
-          <Input type="password" v-model="userForm.url"/>
+        <FormItem label="网站地址"  prop="url">
+          <Input v-model="userForm.url"/>
         </FormItem>
         <FormItem label="联系人" prop="contacts_name">
           <Input v-model="userForm.contacts_name"/>
@@ -81,10 +81,10 @@
         <FormItem label="QQ" prop="contacts_qq">
           <Input v-model="userForm.contacts_qq"/>
         </FormItem>
-        <FormItem label="审核" prop="status">
+        <FormItem label="状态" prop="status">
           <Select v-model="userForm.status" placeholder="请选择">
-            <Option :value="1">通过</Option>
-            <Option :value="-1">不通过</Option>
+            <Option :value="1">可用</Option>
+            <Option :value="-1">不可用</Option>
           </Select>
         </FormItem>
       </Form>
@@ -101,6 +101,27 @@
   export default {
     name: "user-manage",
     data() {
+      // 验证规则
+      var verifyUrl = (rule, value, callback) => {
+       if (!value.match(/(^#)|(^http(s*):\/\/[^\s]+\.[^\s]+)/)) {
+          callback(new Error('无效的url'));
+       }
+       callback();
+      };
+      var verifyEmail = (rule, value, callback) => {
+        if (value&&!value.match(/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/)) {
+          callback(new Error('无效的邮箱'));
+        }
+        callback();
+      };
+
+      var verifyQQ = (rule, value, callback) => {
+        if (value&&!value.match(/^[1-9]\d{4,9}$/)) {
+          callback(new Error('无效的QQ号'));
+        }
+        callback();
+      };
+
       return {
         accessToken: {},
         loading: true,
@@ -137,9 +158,20 @@
         userRoles: [],
         roleList: [],
         errorPass: "",
-        userFormValidate: {
-          username: [
-            { required: true, message: "账号不能为空", trigger: "blur" }
+        formValidate: {
+          title: [
+            { required: true, message: "网站名称不能为空", trigger: "blur" },
+            { min: 2, max: 6, message: '长度在 2 到 6 个字符', trigger: 'blur' }
+          ],
+          url: [
+            { required: true, message: "网站地址不能为空", trigger: "blur" },
+            { validator: verifyUrl, trigger: 'blur' }
+          ],
+          contacts_email: [
+            { validator: verifyEmail, trigger: 'blur' }
+          ],
+          contacts_qq: [
+            { validator: verifyQQ, trigger: 'blur' }
           ],
         },
         submitLoading: false,
@@ -258,7 +290,9 @@
           {
             title: "操作",
             key: "action",
-            width: 240,
+            align:'center',
+            width: 121,
+            fixed:'right',
             render: (h, params) => {
               var btns = [
                 h("Button", {
@@ -341,9 +375,9 @@
         this.loading = true;
         this.getRequest("/admin/link", this.searchForm).then(res => {
           this.loading = false;
-          if (res.success === true) {
-            this.data = res.result.data;
-            this.total = res.result.total;
+          if (res.code === 0) {
+            this.data = res.data.data;
+            this.total = res.data.total;
           }
         });
       },
@@ -393,7 +427,7 @@
       submitUser() {
         this.$refs.userForm.validate(valid => {
           if (valid) {
-            let url = "/user/admin/add";
+            let url = "/admin/link/add";
             if (this.modalType === 1) {
               url = "/admin/link/update/id/"+this.userForm.id;
             }
@@ -401,7 +435,7 @@
             this.submitLoading = true;
             this.postRequest(url, this.userForm).then(res => {
               this.submitLoading = false;
-              if (res.success === true) {
+              if (res.code === 0) {
                 this.$Message.success("修改成功");
                 this.init();
                 this.userModalVisible = false;
@@ -446,7 +480,7 @@
       },
       addUser() {
         this.modalType = 0;
-        this.modalTitle = "添加用户";
+        this.modalTitle = "添加友链";
         this.$refs.userForm.resetFields();
         this.userModalVisible = true;
       },
@@ -471,7 +505,7 @@
           content: "您确认要启用用户 " + v.username + " ?",
           onOk: () => {
             this.postRequest("/user/admin/enable/" + v.id).then(res => {
-              if (res.success === true) {
+              if (res.code === 0) {
                 this.$Message.success("操作成功");
                 this.init();
               }
@@ -486,7 +520,7 @@
           '<label style="margin-left: 30px">未达标：<input style="vertical-align: middle" type="radio" name="status" value="-1"></label>',
           onOk: () => {
             this.postRequest("/admin/link/update/id/" + v.id,{status:$('input[name=status]:checked').val()}).then(res => {
-              if (res.success === true) {
+              if (res.code === 0) {
                 this.$Message.success("操作成功");
                 this.init();
               }
@@ -500,7 +534,7 @@
           content: "您确认要删除该条友链信息？",
           onOk: () => {
             this.deleteRequest("/admin/link/delete/id/"+v.id, { ids: v.id }).then(res => {
-              if (res.success === true) {
+              if (res.code === 0) {
                 this.$Message.success("删除成功");
                 this.init();
               }

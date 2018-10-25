@@ -340,7 +340,7 @@ export default {
           }
           this.postRequest("/admin/func/save", this.menuFormAdd).then(res => {
             this.submitLoading = false;
-            if (res.success === true) {
+            if (res.code === 0) {
               this.$Message.success("添加成功");
               this.init();
               this.menuModalVisible = false;

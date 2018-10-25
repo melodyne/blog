@@ -271,7 +271,7 @@ util.initRouter = function (vm) {
 
   // 加载菜单
   axios.get("/admin/func/menu/").then(res => {
-    let menuData = res.result;
+    let menuData = res.data;
     if (menuData === null || menuData === "" || menuData === undefined) {
       return;
     }

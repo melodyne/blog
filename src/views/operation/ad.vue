@@ -634,9 +634,9 @@
         this.loading = true;
         this.getRequest("/admin/link", this.searchForm).then(res => {
           this.loading = false;
-          if (res.success === true) {
-            this.data = res.result.data;
-            this.total = res.result.total;
+          if (res.code == 0) {
+            this.data = res.data.data;
+            this.total = res.data.total;
           }
         });
       },
@@ -694,7 +694,7 @@
             this.submitLoading = true;
             this.postRequest(url, this.userForm).then(res => {
               this.submitLoading = false;
-              if (res.success === true) {
+              if (res.code == 0) {
                 this.$Message.success("修改成功");
                 this.init();
                 this.userModalVisible = false;
@@ -764,7 +764,7 @@
           content: "您确认要启用用户 " + v.username + " ?",
           onOk: () => {
             this.postRequest("/user/admin/enable/" + v.id).then(res => {
-              if (res.success === true) {
+              if (res.code == 0) {
                 this.$Message.success("操作成功");
                 this.init();
               }
@@ -779,7 +779,7 @@
           '<label style="margin-left: 30px">未达标：<input style="vertical-align: middle" type="radio" name="status" value="-1"></label>',
           onOk: () => {
             this.postRequest("/admin/link/update/id/" + v.id,{status:$('input[name=status]:checked').val()}).then(res => {
-              if (res.success === true) {
+              if (res.code == 0) {
                 this.$Message.success("操作成功");
                 this.init();
               }
@@ -793,7 +793,7 @@
           content: "您确认要删除该条友链信息？",
           onOk: () => {
             this.deleteRequest("/admin/link/delete/id/"+v.id, { ids: v.id }).then(res => {
-              if (res.success === true) {
+              if (res.code == 0) {
                 this.$Message.success("删除成功");
                 this.init();
               }

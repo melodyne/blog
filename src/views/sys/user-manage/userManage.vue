@@ -103,7 +103,7 @@
                   <Input v-model="userForm.avatar" placeholder="可直接填入网络图片链接" clearable style="width: 280px"/>
                   <Button @click="viewPic(userForm.avatar)" type="ghost" icon="eye" class="view-pic">预览图片</Button>
                   <Upload action="/upload/file"
-                          :headers="accessToken" 
+                          :headers="accessToken"
                           :on-success="handleSuccess"
                           :format="['jpg','jpeg','png','gif']"
                           :max-size="5120"
@@ -566,7 +566,7 @@ export default {
           this.submitLoading = true;
           this.postRequest(url, this.userForm).then(res => {
             this.submitLoading = false;
-            if (res.success === true) {
+            if (res.code === 0) {
               this.$Message.success("操作成功");
               this.init();
               this.userModalVisible = false;
@@ -641,7 +641,7 @@ export default {
         content: "您确认要启用用户 " + v.username + " ?",
         onOk: () => {
           this.postRequest("/user/admin/enable/" + v.id).then(res => {
-            if (res.success === true) {
+            if (res.code === 0) {
               this.$Message.success("操作成功");
               this.init();
             }
@@ -655,7 +655,7 @@ export default {
         content: "您确认要禁用用户 " + v.username + " ?",
         onOk: () => {
           this.postRequest("/user/admin/disable/" + v.id).then(res => {
-            if (res.success === true) {
+            if (res.code === 0) {
               this.$Message.success("操作成功");
               this.init();
             }

@@ -12,10 +12,10 @@
                 <Input type="text" v-model="searchForm.username" clearable placeholder="请输入关键字" style="width: 200px"/>
               </Form-item>
               <span v-if="drop">
-                              <Form-item label="状态" prop="status">
+                              <Form-item label="是否显示" prop="status">
                                 <Select v-model="searchForm.status" placeholder="请选择" clearable style="width: 200px">
-                                  <Option value="0">正常</Option>
-                                  <Option value="-1">禁用</Option>
+                                  <Option value="0">不显示</Option>
+                                  <Option value="-1">显示</Option>
                                 </Select>
                               </Form-item>
                               <Form-item label="创建时间">
@@ -52,7 +52,7 @@
             </Alert>
           </Row>
           <Row class="margin-top-10 searchable-table-con1">
-            <Table :loading="loading" border :columns="columns" :data="data" sortable="custom" @on-sort-change="changeSort" @on-selection-change="showSelect" ref="table"></Table>
+            <Table :loading="loading" border :columns="columns"  :data="data"  sortable="true" :default-sort = "{prop: 'sort', order: 'ascending'}" @on-sort-change="changeSort" @on-selection-change="showSelect" ref="table"></Table>
             <Table :columns="columns" :data="exportData" ref="exportTable" style="display:none"></Table>
           </Row>
           <Row type="flex" justify="end" class="code-row-bg page">
@@ -147,22 +147,26 @@
             align: "center"
           },
           {
+            title: "序号",
+            key: "sort",
+            width: 80,
+            align:'center',
+            sortable:true
+          },
+          {
             title: "项目名称",
             key: "name",
             width: 145,
-            sortable: true
           },
           {
             title: "标签",
             key: "tag",
             width: 200,
-            sortable: true,
           },
           {
             title: "项目简介",
             key: "intro",
             width: 240,
-            sortable: true
           },
           {
             title: "状态",
@@ -213,16 +217,79 @@
             }
           },
           {
-            title: "申请时间",
+            title: "发布时间",
             key: "create_time",
-            sortable: true,
             sortType: "desc",
             width: 160
+          },
+          {title: "排序",
+            key: "action",
+            align: "center",
+            width: 160,
+            render: (h, params) => {
+              return [
+                h("a", {
+                  style: {
+                    marginRight: "8px",
+                    fontSize:'14px'
+                  },
+                  on: {
+                    click: () => {
+                      this.postRequest("/admin/pro/update/id/" + params.row.id,{sort:1}).then(res => {
+                        if (res.code === 0) {
+                          this.init();
+                        }
+                      });
+                    }
+                  }
+                },'顶置'),
+                h("img", {
+                  attrs: {
+                    src: "static/main/images/up.png",
+                    height:'14px'
+                  },
+                  style: {
+                    marginRight: "8px",
+                    cursor:'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.postRequest("/admin/pro/update/id/" + params.row.id,{sort:params.row.sort-1}).then(res => {
+                        if (res.code === 0) {
+                          this.init();
+                        }
+                      });
+                    }
+                  }
+                }),
+                h("img", {
+                  attrs: {
+                    src: "static/main/images/down.png",
+                    height:'14px'
+                  },
+                  style: {
+                    marginRight: "8px",
+                    cursor:'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.postRequest("/admin/pro/update/id/" + params.row.id,{sort:params.row.sort+1}).then(res => {
+                        if (res.code === 0) {
+                          this.init();
+                        }
+                      });
+                    }
+                  }
+                }),
+              ];
+            }
           },
           {
             title: "操作",
             key: "action",
-            width: 240,
+            width: 166,
+            align:'center',
+            fixed:'right',
             render: (h, params) => {
               var btns = [
                 h("Button", {
@@ -235,11 +302,10 @@
                     },
                     on: {
                       click: () => {
-                        this.edit(params.row);
+                          window.location.hash = '/operation/pro_edit?id='+params.row.id;
                       }
                     }
-                  },
-                  "编辑"),
+                  },"编辑"),
                 h("Button", {
                   props: {
                     type: "ghost",
@@ -252,7 +318,6 @@
                   }
                 }, "删除")
               ];
-              if (params.row.status === 0) {
                 btns.push( h("Button", {
                     props: {
                       type: "primary",
@@ -263,12 +328,12 @@
                     },
                     on: {
                       click: () => {
-                        this.disable(params.row);
+                        this.toggle(params.row);
                       }
                     }
                   }
-                  ,"审核"));
-              }
+                  ,params.row.status==1?'隐藏':'显示'));
+
               return h("div",btns );
             }
           }
@@ -305,9 +370,9 @@
         this.loading = true;
         this.getRequest("/admin/pro", this.searchForm).then(res => {
           this.loading = false;
-          if (res.success === true) {
-            this.data = res.result.data;
-            this.total = res.result.total;
+          if (res.code === 0) {
+            this.data = res.data.data;
+            this.total = res.data.total;
           }
         });
       },
@@ -365,7 +430,7 @@
             this.submitLoading = true;
             this.postRequest(url, this.userForm).then(res => {
               this.submitLoading = false;
-              if (res.success === true) {
+              if (res.code === 0) {
                 this.$Message.success("修改成功");
                 this.init();
                 this.userModalVisible = false;
@@ -429,28 +494,21 @@
         this.userForm = userInfo;
         this.userModalVisible = true;
       },
-      enable(v) {
+      toggle(v) {
+        if(v.status==1){
+          var action = '隐藏';
+          var status = 0;
+        }else {
+          var action = '显示';
+          var status = 1;
+        }
+
         this.$Modal.confirm({
-          title: "确认启用",
-          content: "您确认要启用用户 " + v.username + " ?",
+          title: "确认"+action,
+          content: "您确认要" + action+ "该信息 ?",
           onOk: () => {
-            this.postRequest("/user/admin/enable/" + v.id).then(res => {
-              if (res.success === true) {
-                this.$Message.success("操作成功");
-                this.init();
-              }
-            });
-          }
-        });
-      },
-      disable(v) {
-        this.$Modal.confirm({
-          title: '友链审核',
-          content: '<label>通过：<input style="vertical-align: middle" type="radio" name="status" value="1"></label>' +
-          '<label style="margin-left: 30px">未达标：<input style="vertical-align: middle" type="radio" name="status" value="-1"></label>',
-          onOk: () => {
-            this.postRequest("/admin/link/update/id/" + v.id,{status:$('input[name=status]:checked').val()}).then(res => {
-              if (res.success === true) {
+            this.postRequest("/admin/pro/update/id/" + v.id,{status:status}).then(res => {
+              if (res.code === 0) {
                 this.$Message.success("操作成功");
                 this.init();
               }
@@ -464,7 +522,7 @@
           content: "您确认要删除该条友链信息？",
           onOk: () => {
             this.deleteRequest("/admin/pro/delete/id/"+v.id, { ids: v.id }).then(res => {
-              if (res.success === true) {
+              if (res.code === 0) {
                 this.$Message.success("删除成功");
                 this.init();
               }

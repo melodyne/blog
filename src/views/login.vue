@@ -171,19 +171,19 @@ export default {
               password: this.form.password,
               saveLogin: this.saveLogin
             }).then(res => {
-              if (res.success === true) {
-                setStore("accessToken", res.result);
+              if (res.code === 0) {
+                setStore("accessToken", res.data);
                 if (this.saveLogin) {
                   localStorage.saveLogin = "true";
                 }
                 // 获取用户信息
                 this.getRequest("/admin/user/info").then(res => {
-                  if (res.success === true) {
+                  if (res.code === 0) {
                     // 避免超过大小限制
-                    delete res.result.permissions;
-                    Cookies.set("userInfo", JSON.stringify(res.result));
+                    delete res.data.permissions;
+                    Cookies.set("userInfo", JSON.stringify(res.data));
                     setStore("userInfo", res.result);
-                    this.$store.commit("setAvatarPath", res.result.head_img);
+                    this.$store.commit("setAvatarPath", res.data.head_img);
                     // 加载菜单
                     util.initRouter(this);
                     this.$router.push({
